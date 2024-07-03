@@ -1,8 +1,13 @@
 import { createDatabaseInstance } from "@/db";
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function POST(req, res) {
+export default async function POST(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === "OPTIONS") {
         return res.status(200).end();
+    }
+
+    if (req.method !== "POST") {
+        return res.status(405).json({ message: "Method not allowed", wants: "POST" });
     }
     
     const { token, themeId } = req.body;
@@ -13,7 +18,7 @@ export default async function POST(req, res) {
         return res.status(400).json({ message: "Invalid Request, themeId is missing" });
     }
 
-    const response = await fetch("/user/isAuthed", {
+    const response = await fetch("https://themes-delta.vercel.app/api/user/isAuthed", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -21,9 +26,9 @@ export default async function POST(req, res) {
         body: JSON.stringify({ token })
     });
 
-    const { isAuthorized, userId } = await response.json();
+    const { authenticated, userId } = await response.json();
 
-    if (!isAuthorized) {
+    if (!authenticated) {
         return res.status(401).json({ status: 401, message: "Given token is not authorized" });
     }
 
