@@ -6,7 +6,9 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
     // probably just my skill issue
     if (req.method === "OPTIONS") {
         return res.status(200).end();
-    } else if (req.method !== "POST") {
+    }
+    
+    if (req.method !== "POST") {
         return res.status(405).json({ message: "Method not allowed", wants: "POST" });
     }
 

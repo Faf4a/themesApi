@@ -4,10 +4,11 @@ import { createDatabaseInstance } from "../../../db";
 export default async function POST(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === "OPTIONS") {
         return res.status(200).end();
-    } else if (req.method !== "POST") {
+    } 
+    
+    if (req.method !== "POST") {
         return res.status(405).json({ message: "Method not allowed", wants: "POST" });
     }
-
 
     const { token } = req.body;
 
