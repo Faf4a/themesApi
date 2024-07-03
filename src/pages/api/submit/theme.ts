@@ -26,9 +26,9 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
         body: JSON.stringify({ token })
     });
 
-    const { authorized, userId } = await response.json();
+    const { authenticated, userId } = await response.json();
 
-    if (!authorized) {
+    if (!authenticated) {
         return res.status(401).json({ status: 401, message: "Given token is not authorized" });
     }
     
