@@ -4,10 +4,6 @@ import { createDatabaseInstance } from "@/db";
 export default async function DELETE(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === "OPTIONS") {
         return res.status(200).end();
-    } 
-    
-    if (req.method !== "DELETE") {
-        return res.status(405).json({ message: "Method not allowed", wants: "DELETE" });
     }
 
     const { token, userId } = req.body;
@@ -17,7 +13,7 @@ export default async function DELETE(req: NextApiRequest, res: NextApiResponse) 
     }
 
     if (!userId) {
-        return res.status(400).json({ message: "Cannot revoke authorization without user id, if you think that this is a bug report it to https://faf4a/themesApi" });
+        return res.status(400).json({ message: "Cannot revoke authorization without user id, if you think that this is a bug report it to https://github.com/faf4a/themesApi" });
     }
 
     const client = await createDatabaseInstance();
