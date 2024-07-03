@@ -1,6 +1,6 @@
 import { createDatabaseInstance } from "@/db";
 
-export default async function handler(req, res) {
+export default async function POST(req, res) {
     if (req.method === "OPTIONS") {
         return res.status(200).end();
     } else if (req.method !== "POST") {

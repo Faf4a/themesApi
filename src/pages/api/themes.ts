@@ -12,10 +12,9 @@ export default async function GET(req: NextApiRequest, res: NextApiResponse) {
 
     const themes = await themesCollection.find().toArray();
 
-    // removing the database keys from the response
     const sanitizedThemes = themes.map(({ _id, ...rest }) => rest);
 
     res.setHeader("Cache-Control", "public, max-age=1200");
     res.setHeader("Content-Type", "application/json");
-    res.status(200).end(sanitizedThemes);
+    res.status(200).json(sanitizedThemes);
 }

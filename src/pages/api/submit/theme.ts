@@ -71,5 +71,5 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
     });
 
     res.setHeader("Content-Type", "application/json");
-    res.status(200).end({ status: 200 });
+    res.status(200).json({ status: 200 });
 }

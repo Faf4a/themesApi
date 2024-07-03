@@ -39,7 +39,7 @@ export default async function GET(req: NextApiRequest, res: NextApiResponse) {
         const ext = extname(file);
         const mimeType = mimeTypes[ext];
 
-        if (!mimeType) return res.status(500).send({ status: 500, message: "Invalid file format, please report this via https://github.com/faf4a/themesApi" });
+        if (!mimeType) return res.status(500).json({ status: 500, message: "Invalid file format, please report this via https://github.com/faf4a/themesApi" });
 
         res.setHeader("Content-Type", mimeType);
         res.status(200).end(data);
