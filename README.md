@@ -285,7 +285,7 @@ fetch("https://themes-delta.vercel.app/api/user/findUserByToken", {
 ```
 
 ### `DELETE` **`/revoke`**
-Wants `token` (unique user token, **__DO NOT PASS YOUR DISCORD ACCOUNT TOKEN__**) in `body`.
+Wants `token` (unique user token, **__DO NOT PASS YOUR DISCORD ACCOUNT TOKEN__**) and `userId` in `body`.
 
 - Deletes user data associated with the token.
 
@@ -297,7 +297,7 @@ fetch("https://themes-delta.vercel.app/api/user/revoke", {
     headers: {
         "Content-Type": "application/json"
     },
-    body: JSON.stringify({ token: "" })
+    body: JSON.stringify({ token: "", userId: "" })
 })
 ```
 
