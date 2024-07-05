@@ -1,5 +1,6 @@
-import { createDatabaseInstance } from "@/db";
+import { createDatabaseInstance } from "@utils/db";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { isAuthed } from "@utils/auth";
 
 export default async function POST(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === "OPTIONS") {
@@ -18,17 +19,9 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
         return res.status(400).json({ message: "Invalid Request, themeId is missing" });
     }
 
-    const response = await fetch("https://themes-delta.vercel.app/api/user/isAuthed", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ token })
-    });
+    const user = await isAuthed(token);
 
-    const { authenticated, userId } = await response.json();
-
-    if (!authenticated) {
+    if (!user) {
         return res.status(401).json({ status: 401, message: "Given token is not authorized" });
     }
 
@@ -46,12 +39,12 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
         const themeLike = await likesCollection.findOne({ themeId });
 
         if (themeLike) {
-            if (!themeLike.userIds.includes(userId)) {
+            if (!themeLike.userIds.includes(user.id)) {
                 return res.status(409).json({ status: 409, message: `User has not liked this theme matching '${themeId}'` });
             }
 
             // @ts-ignore
-            await likesCollection.updateOne({ themeId }, { $pull: { userIds: userId } });
+            await likesCollection.updateOne({ themeId }, { $pull: { userIds: user.id } });
 
             const updatedThemeLike = await likesCollection.findOne({ themeId });
             if (updatedThemeLike && updatedThemeLike.userIds.length === 0) {

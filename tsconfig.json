@@ -18,8 +18,9 @@
     "baseUrl": ".",
     "jsx": "preserve",
     "paths": {
-      "@/types": ["src/types.ts"],
-      "@/db": ["src/db.ts"]
+      "@types": ["src/types.ts"],
+      "@utils/auth": ["src/auth.ts"],
+      "@utils/db": ["src/db.ts"]
     }
   },
   "include": [

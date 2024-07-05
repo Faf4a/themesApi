@@ -1,5 +1,6 @@
-import { createDatabaseInstance } from "@/db";
+import { createDatabaseInstance } from "@utils/db";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { isAuthed } from "@utils/auth";
 
 export default async function POST(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === "OPTIONS") {
@@ -18,17 +19,9 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
         return res.status(400).json({ status: 400, message: "Invalid Request, content is missing" });
     }
 
-    const response = await fetch("https://themes-delta.vercel.app/api/user/isAuthed", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ token })
-    });
+    const user = await isAuthed(token);
 
-    const { authenticated, userId } = await response.json();
-
-    if (!authenticated) {
+    if (!user) {
         return res.status(401).json({ status: 401, message: "Given token is not authorized" });
     }
     
@@ -38,7 +31,7 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
     const blockedUsers = db.collection("blockedUsers");
 
     // you will explode if you spam this endpoint
-    const isBlocked = await blockedUsers.findOne({ id: userId });
+    const isBlocked = await blockedUsers.findOne({ id: user.id });
 
     if (isBlocked) {
         // explode even more if you're blocked :troll:
@@ -67,7 +60,7 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
     await themesCollection.insertOne({
         name,
         description,
-        author: { id: userId, name: author },
+        author: { id: user.id, name: author },
         content,
         decodedContent
     });

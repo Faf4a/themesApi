@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { createDatabaseInstance } from "@/db";
+import { createDatabaseInstance } from "@utils/db";
 
 export default async function DELETE(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === "OPTIONS") {
@@ -23,8 +23,6 @@ export default async function DELETE(req: NextApiRequest, res: NextApiResponse) 
     const userEntry = await users.deleteOne({ "user.id": userId, "user.key": token });
 
     res.setHeader("Content-Type", "application/json");
-
-    console.log(userEntry);
     
     if (userEntry.deletedCount === 0) {
         res.status(500).json({ status: 400, message: "No user found with those credentials" });

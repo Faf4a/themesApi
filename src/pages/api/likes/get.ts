@@ -1,4 +1,4 @@
-import { createDatabaseInstance } from "@/db";
+import { createDatabaseInstance } from "@utils/db";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function GET(req: NextApiRequest, res: NextApiResponse) {

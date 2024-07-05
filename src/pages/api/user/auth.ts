@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { APIUser as User } from "discord-api-types/v10";
-import { createDatabaseInstance } from "@/db";
+import { createDatabaseInstance } from "@utils/db";
 import { randomBytes } from "crypto";
 
 export default async function GET(req: NextApiRequest, res: NextApiResponse) {
