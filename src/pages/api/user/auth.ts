@@ -40,7 +40,7 @@ export default async function GET(req: NextApiRequest, res: NextApiResponse) {
     });
 
     if (!response.ok) {
-        return res.status(401).json({ message: "Invalid or expired Discord token" });
+        return res.status(401).json({ status: 401, message: "Invalid or expired Discord token" });
     }
 
     const user: User = await response.json();

@@ -2,8 +2,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { createDatabaseInstance } from "@utils/db";
 
 export default async function DELETE(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method === "OPTIONS") {
-        return res.status(200).end();
+    if (req.method !== "DELETE") {
+        return res.status(405).json({ message: "Method not allowed", wants: "DELETE" });
     }
 
     const { token, userId } = req.body;
