@@ -3,8 +3,8 @@ import { extname, join } from "path";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 // out of scope so this only runs once per instance
-const directory = join(process.cwd(), "public", "thumbnails");
-const invalidPreview = join(directory, "not-found/image.png");
+const directory = join(process.cwd(), "public/thumbnails");
+const invalidPreview = join(process.cwd(), "public/not-found/image.png");
 
 // allowed theme preview formats
 const mimeTypes = {
