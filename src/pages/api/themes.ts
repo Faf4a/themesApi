@@ -1,7 +1,11 @@
 import { createDatabaseInstance } from "@utils/db";
-import type { NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function GET(res: NextApiResponse) {
+export default async function GET(req: NextApiRequest, res: NextApiResponse) {
+    if (req.method !== "GET") {
+        return res.status(405).json({ message: "Method not allowed", wants: "GET" });
+    }
+
     const client = await createDatabaseInstance();
     const db = client.db("themesDatabase");
     const themesCollection = db.collection("themes");

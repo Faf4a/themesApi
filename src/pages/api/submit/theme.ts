@@ -2,12 +2,15 @@ import { createDatabaseInstance } from "@utils/db";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { isAuthed } from "@utils/auth";
 
+const reqsMap = new Map<string, number[]>();
+
 export default async function POST(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== "POST") {
         return res.status(405).json({ message: "Method not allowed", wants: "POST" });
     }
 
     const { token, content } = req.body;
+    const now = Date.now();
 
     if (!token) {
         return res.status(400).json({ status: 400, message: "Invalid Request, unique user token is missing" });
@@ -20,6 +23,15 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
     if (!user) {
         return res.status(401).json({ status: 401, message: "Given token is not authorized" });
     }
+
+    const timestamps = reqsMap.get(user.id) || [];
+    const reqs = timestamps.filter(timestamp => now - timestamp < 15000);
+    if (reqs.length >= 3) {
+        return res.status(429).json({ status: 429, message: "Rate limit exceeded. Please try again later." });
+    }
+
+    reqs.push(now);
+    reqsMap.set(user.id, reqs);
     
     const client = await createDatabaseInstance();
     const db = client.db("submittedThemesDatabase");
