@@ -18,5 +18,5 @@ export const getUser = async (token: string) => {
     const users = client.db("themesDatabase").collection("users");
     const entry = await users.findOne({ "user.key": token });
 
-    return entry.user || null;
+    return entry?.user;
 };
