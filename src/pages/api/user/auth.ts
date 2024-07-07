@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { APIUser as User } from "discord-api-types/v10";
-import { createDatabaseInstance } from "@utils/db";
+import clientPromise from "@utils/db";
 import { randomBytes } from "crypto";
 
 export default async function GET(req: NextApiRequest, res: NextApiResponse) {
@@ -45,7 +45,7 @@ export default async function GET(req: NextApiRequest, res: NextApiResponse) {
 
     const user: User = await response.json();
 
-    const client = await createDatabaseInstance();
+    const client = await clientPromise;
     const db = client.db("themesDatabase");
     const users = db.collection("users");
 

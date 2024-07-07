@@ -1,4 +1,4 @@
-import { createDatabaseInstance } from "@utils/db";
+import clientPromise from "@utils/db";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { isAuthed } from "@utils/auth";
 
@@ -27,7 +27,7 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
     let userReqs = reqsMap.get(user.id) || { timestamps: [], count: 0 };
     const reqs = userReqs.timestamps.filter((timestamp) => now - timestamp < 15e3);
 
-    const client = await createDatabaseInstance();
+    const client = await clientPromise;
     const db = client.db("submittedThemesDatabase");
     
     const themesCollection = db.collection("pending");

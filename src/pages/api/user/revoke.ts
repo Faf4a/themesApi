@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { createDatabaseInstance } from "@utils/db";
+import clientPromise from "@utils/db";
 
 export default async function DELETE(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== "DELETE") {
@@ -16,7 +16,7 @@ export default async function DELETE(req: NextApiRequest, res: NextApiResponse) 
         return res.status(400).json({ message: "Cannot revoke authorization without user id, if you think that this is a bug report it to https://github.com/faf4a/themesApi" });
     }
 
-    const client = await createDatabaseInstance();
+    const client = await clientPromise;
     const db = client.db("themesDatabase");
     const users = db.collection("users");
 

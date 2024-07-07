@@ -1,4 +1,4 @@
-import { createDatabaseInstance } from "@utils/db";
+import clientPromise from "@utils/db";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { isAuthed } from "@utils/auth";
 
@@ -21,7 +21,7 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
         return res.status(401).json({ status: 401, message: "Given token is not authorized" });
     }
 
-    const client = await createDatabaseInstance();
+    const client = await clientPromise;
     const db = client.db("themesDatabase");
     const themesCollection = db.collection("themes");
     const likesCollection = db.collection("likes");

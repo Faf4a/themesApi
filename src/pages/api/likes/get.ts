@@ -1,4 +1,4 @@
-import { createDatabaseInstance } from "@utils/db";
+import clientPromise from "@utils/db";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function GET(req: NextApiRequest, res: NextApiResponse) {
@@ -8,7 +8,7 @@ export default async function GET(req: NextApiRequest, res: NextApiResponse) {
 
     res.setHeader("Content-Type", "application/json");
 
-    const client = await createDatabaseInstance();
+    const client = await clientPromise;
     const db = client.db("themesDatabase");
     const likesCollection = db.collection("likes");
 
