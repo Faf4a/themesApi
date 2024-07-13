@@ -19,8 +19,9 @@
     "jsx": "preserve",
     "paths": {
       "@types": ["src/types.ts"],
-      "@utils/auth": ["src/auth.ts"],
-      "@utils/db": ["src/db.ts"]
+      "@utils/db": ["src/utils/db.ts"],
+      "@utils/auth": ["src/utils/auth.ts"],
+      "@components/*": ["src/components"],
     }
   },
   "include": [
