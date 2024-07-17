@@ -1,19 +1,34 @@
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { Chip, Breadcrumbs, Typography, Link, Card, CardContent, CardMedia, Grid, Skeleton, IconButton, TextField, Box, Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
+import { Box, Breadcrumbs, Button, Card, CardContent, CardMedia, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Link, Pagination, PaginationItem, Skeleton, TextField, Tooltip, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import EditIcon from "@mui/icons-material/Edit";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
+import "react18-json-view/src/style.css";
 
-// ssr moment, react-json-view breaks completely with it
-const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
+// ssr moment, react18-json-view breaks completely with it
+const DynamicReactJson = dynamic(import("react18-json-view"), { ssr: false });
 
 export default function ThemeContainer() {
     const [themes, setThemes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [currentTheme, setCurrentTheme] = useState(null);
+
+    const itemsPerPage = 12;
+    const [page, setPage] = useState(1);
+
+    const handleChange = (e, v) => {
+        setPage(v);
+    };
+
+    const pageCount = Math.ceil(themes.length / itemsPerPage);
+    const indexOfLastItem = page * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = themes.slice(indexOfFirstItem, indexOfLastItem);
 
     useEffect(() => {
         fetch("/api/themes", { cache: "no-cache" })
@@ -26,7 +41,7 @@ export default function ThemeContainer() {
             .catch((error) => console.error(error));
     }, [themes, loading]);
 
-    const handleDelete = (themeId) => {
+    const handleDelete = (themeId: number) => {
         fetch(`/api/manage/delete`, {
             method: "POST",
             headers: {
@@ -97,7 +112,7 @@ export default function ThemeContainer() {
                                       <Skeleton width="40%" />
                                   </Grid>
                               ))
-                            : themes.map((theme) => (
+                            : currentItems.map((theme) => (
                                   <Grid item xs={12} sm={6} md={4} key={theme.id}>
                                       <Box sx={{ position: "relative" }}>
                                           <div style={{ overflow: "hidden" }}>
@@ -132,12 +147,16 @@ export default function ThemeContainer() {
                                                       </Typography>
                                                   </CardContent>
                                                   <Box p={1} className="actionIcons" sx={{ position: "absolute", bottom: 0, right: 0, visibility: "hidden" }}>
-                                                      <IconButton aria-label="delete" onClick={() => handleDelete(theme.id)} sx={{ color: "#FF6961" }}>
-                                                          <DeleteIcon />
-                                                      </IconButton>
-                                                      <IconButton aria-label="edit" onClick={() => handleEdit(theme)} sx={{ color: "#fff" }}>
-                                                          <EditIcon />
-                                                      </IconButton>
+                                                      <Tooltip title="Delete Theme" disableInteractive arrow>
+                                                          <IconButton aria-label="delete" onClick={() => handleDelete(theme.id)} sx={{ color: "#FF6961" }}>
+                                                              <DeleteIcon />
+                                                          </IconButton>
+                                                      </Tooltip>
+                                                      <Tooltip title="Edit Theme" disableInteractive arrow>
+                                                          <IconButton aria-label="edit" onClick={() => handleEdit(theme)} sx={{ color: "#fff" }}>
+                                                              <EditIcon />
+                                                          </IconButton>
+                                                      </Tooltip>
                                                   </Box>
                                               </Card>
                                           </div>
@@ -150,7 +169,7 @@ export default function ThemeContainer() {
                         <DialogContent>
                             {currentTheme && (
                                 <Box p={2} style={{ overflowY: "auto", maxHeight: "400px" }}>
-                                    <DynamicReactJson src={currentTheme} theme="flat" iconStyle="square" onEdit={(edit) => setCurrentTheme(edit.updated_src)} onAdd={(add) => setCurrentTheme(add.updated_src)} onDelete={(del) => setCurrentTheme(del.updated_src)} />
+                                    <DynamicReactJson src={currentTheme} theme="vscode" collapseStringMode="word" displaySize={1} editable onEdit={(edit) => setCurrentTheme(edit.src)} onAdd={(add) => setCurrentTheme(add.src)} onDelete={(del) => setCurrentTheme(del.src)} />
                                 </Box>
                             )}
                             {currentTheme && (
@@ -180,6 +199,17 @@ export default function ThemeContainer() {
                             <Button onClick={() => handleUpdate(currentTheme)}>Update</Button>
                         </DialogActions>
                     </Dialog>
+                    <Pagination
+                        count={pageCount}
+                        page={page}
+                        onChange={handleChange}
+                        renderItem={(item) => <PaginationItem slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }} {...item} />}
+                        sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            marginTop: "15px"
+                        }}
+                    />
                 </main>
             </Container>
         </>
