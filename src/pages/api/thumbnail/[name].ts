@@ -22,7 +22,7 @@ export default async function GET(req: NextApiRequest, res: NextApiResponse) {
     const decodedName = decodeURIComponent(name);
 
     res.setHeader("Content-Disposition", "inline");
-    res.setHeader("Cache-Control", "public, max-age=360");
+    res.setHeader("Cache-Control", "public, max-age=1200");
 
     try {
         const files = await readdir(directory);
