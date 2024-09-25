@@ -9,6 +9,7 @@ const invalidPreview = join(process.cwd(), "public/not-found/image.png");
 // allowed theme preview formats
 const mimeTypes = {
     ".png": "image/png",
+    ".jpg": "image/jpg",
     ".gif": "image/gif",
     ".webp": "image/webp"
 };
