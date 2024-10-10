@@ -70,6 +70,7 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
     await themesCollection.insertOne({
         title,
         description,
+        version,
         type,
         author: attribution.contributors,
         content,
