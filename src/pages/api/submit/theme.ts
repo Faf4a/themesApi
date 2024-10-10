@@ -9,13 +9,13 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
         return res.status(405).json({ message: "Method not allowed", wants: "POST" });
     }
 
-    const { token, content } = req.body;
+    const { token, title, description, content, version, type, attribution, screenshotMetadata } = req.body;
     const now = Date.now();
 
     if (!token) {
         return res.status(400).json({ status: 400, message: "Invalid Request, unique user token is missing" });
-    } else if (!content) {
-        return res.status(400).json({ status: 400, message: "Invalid Request, content is missing" });
+    } else if (!content || !title || !description || !version || !type) {
+        return res.status(400).json({ status: 400, message: "Invalid Request" });
     }
 
     const user = await isAuthed(token);
@@ -66,32 +66,14 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
             return res.status(403).json({ status: 403, message: "You have been blocked from submitting themes", reason: isBlocked.reason, expires: isBlocked.expires });
         }
     }
-
-    const decodedContent = Buffer.from(content, "base64").toString("utf-8");
-    // i hate regex with a passion, i dont know why this works but it works somehow
-    const metadata = decodedContent.match(/\/\*\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\//g)?.[0] || "";
-    // find the theme name, description, and author
-    if (!metadata) return res.status(400).json({ message: "Malformed theme metadata, must include a name, version, and author", status: 400 });
-
-    const name = metadata.match(/@name\s+(.+)/)?.[1] || "";
-    const description = metadata.match(/@version\s+(.+)/)?.[1] || "";
-    const author = metadata.match(/@author\s+(.+)/)?.[1] || "";
-
-    switch (true) {
-        case !name:
-            return res.status(400).json({ message: "Malformed theme metadata, must include a name", status: 400 });
-        case !description:
-            return res.status(400).json({ message: "Malformed theme metadata, must include a description", status: 400 });
-        case !author:
-            return res.status(400).json({ message: "Malformed theme metadata, must include an author", status: 400 });
-    }
-
+    // title, content, version, type, attribution, screenshotMetadata
     await themesCollection.insertOne({
-        name,
+        title,
         description,
-        author: { id: user.id, name: author },
+        type,
+        author: attribution.contributors,
         content,
-        decodedContent
+        screenshotMetadata
     });
 
     res.setHeader("Content-Type", "application/json");
