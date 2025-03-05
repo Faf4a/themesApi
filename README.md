@@ -1,3 +1,6 @@
+## No longer usable
+## This version of the API has been abandoned along with the old domain. See https://api.discord-themes.com
+
 ## ThemeAPI
 
 This API is used to retrieve themes used for the [Theme Library](https://github.com/faf4a/ThemeLibrary).
